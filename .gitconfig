@@ -1,3 +1,12 @@
+[user]
+	name = Artem Gordinsky
+	email = artem@gordinskiy.com
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+
 [alias]
 
 	# View abbreviated SHA, description, and history graph of the latest 20 commits
@@ -78,6 +87,15 @@
 			git commit --amend -m \"$(git log -1 --pretty=%B)\n\nCloses #$1.\"; \
 		fi \
 	}; f"
+
+	co = checkout
+
+	changelog = "!sh -c 'git --no-pager log --pretty=format:\"- %an: %b\" --grep \"pull request\" $(git tag -l \"[0-9-]*\" | tail -n${1-1} | head -n1)..master; echo' -"
+
+	# Delete merged, non-squashed branches.
+	cleanup = "!git co master && git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d"
+
+	undo = reset --soft HEAD^
 
 [apply]
 
@@ -185,3 +203,6 @@
 [url "git://gist.github.com/"]
 
 	insteadOf = "gist:"
+
+[oh-my-zsh]
+	hide-status = 0
